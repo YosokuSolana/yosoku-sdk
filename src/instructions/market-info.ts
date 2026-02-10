@@ -11,8 +11,6 @@ import {
 export interface CreateMarketInfoParams {
   marketType: MarketInfoTypeLabel;
   resolverType: ResolverTypeInput;
-  /** Unix timestamp (seconds) for the event deadline */
-  eventDeadline: BN;
 }
 
 export interface CreateMarketInfoResult {
@@ -34,8 +32,7 @@ export class MarketInfoModule {
     const sig = await this.program.methods
       .createMarketInfo(
         toAnchorMarketInfoType(params.marketType),
-        toAnchorResolverType(params.resolverType),
-        params.eventDeadline
+        toAnchorResolverType(params.resolverType)
       )
       .accounts({
         marketInfo: keypair.publicKey,
@@ -59,7 +56,6 @@ export class MarketInfoModule {
   async createPopulatedMarketInfo(params: {
     marketType: MarketInfoTypeLabel;
     resolverType: ResolverTypeInput;
-    eventDeadline: BN;
     marketQuestion?: string;
     description?: string;
     rules?: string;
@@ -67,7 +63,6 @@ export class MarketInfoModule {
     const result = await this.createMarketInfo({
       marketType: params.marketType,
       resolverType: params.resolverType,
-      eventDeadline: params.eventDeadline,
     });
 
     if (params.marketQuestion) {

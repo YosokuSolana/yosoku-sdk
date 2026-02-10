@@ -1,7 +1,7 @@
 {
-  "name": "@pred-market/sdk",
+  "name": "yosoku",
   "version": "0.1.0",
-  "description": "TypeScript SDK for the pred-market Solana prediction market program",
+  "description": "TypeScript SDK for the Yosoku prediction market platform on Solana",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
@@ -10,7 +10,10 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf dist",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "test:unit": "ts-mocha -p ./tsconfig.test.json -t 30000 'tests/unit/**/*.test.ts'",
+    "test:integration": "ts-mocha -p ./tsconfig.test.json -t 1000000 'tests/integration/**/*.test.ts'",
+    "test": "npm run test:unit && npm run test:integration"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.31.1",
@@ -19,6 +22,11 @@
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
+    "@types/mocha": "^10.0.6",
+    "@types/chai": "^4.3.14",
+    "mocha": "^10.4.0",
+    "chai": "^4.4.0",
+    "ts-mocha": "^10.0.0",
     "typescript": "^5.4.4"
   },
   "peerDependencies": {

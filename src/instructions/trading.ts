@@ -27,6 +27,8 @@ export interface LimitBidParams {
   /** USDC amount to spend */
   usdcAmount: BN;
   seed?: number;
+  /** Whether to match against existing resting orders (default: true) */
+  matchExisting?: boolean;
   referralAccount?: PublicKey;
 }
 
@@ -40,6 +42,8 @@ export interface LimitAskParams {
   /** Number of shares to sell */
   shares: BN;
   seed?: number;
+  /** Whether to match against existing resting orders (default: true) */
+  matchExisting?: boolean;
   referralAccount?: PublicKey;
 }
 
@@ -51,6 +55,8 @@ export interface CoveredBidParams {
   shares: BN;
   seed?: number;
   coveredBy: CoveredByType;
+  /** Whether to match against existing resting orders (default: true) */
+  matchExisting?: boolean;
   referralAccount?: PublicKey;
 }
 
@@ -114,7 +120,8 @@ export class TradingModule {
         toAnchorSide(params.side),
         params.price,
         params.usdcAmount,
-        seed
+        seed,
+        params.matchExisting ?? true
       )
       .accounts({
         user,
@@ -147,10 +154,10 @@ export class TradingModule {
     const market = await this.resolveMarket(params.market);
     const leg = market.legs[index];
 
-    // The program handles the internal conversion; SDK just derives the correct order PDA
-    const complementPriceTick = 1000 - params.price;
+    // The program's seeds constraint uses the price arg as-is;
+    // complement conversion happens inside the function body.
     const [orderPda] = getOrderPda(
-      this.program.programId, params.market, index, user, complementPriceTick, seed
+      this.program.programId, params.market, index, user, params.price, seed
     );
     const [yesPos] = getPositionPda(this.program.programId, params.market, index, user, 0);
     const [noPos] = getPositionPda(this.program.programId, params.market, index, user, 1);
@@ -163,7 +170,8 @@ export class TradingModule {
         toAnchorSide(params.side),
         params.price,
         params.shares,
-        seed
+        seed,
+        params.matchExisting ?? true
       )
       .accounts({
         user,
@@ -211,7 +219,8 @@ export class TradingModule {
         params.price,
         params.shares,
         seed,
-        toAnchorCoveredBy(params.coveredBy)
+        toAnchorCoveredBy(params.coveredBy),
+        params.matchExisting ?? true
       )
       .accounts({
         user,

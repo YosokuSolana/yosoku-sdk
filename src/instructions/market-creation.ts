@@ -96,7 +96,6 @@ export class MarketModule {
       const miResult = await this.marketInfoModule.createPopulatedMarketInfo({
         marketType: "regular",
         resolverType: params.resolverType ?? { type: "uma" },
-        eventDeadline: toUnixTimestamp(params.eventDeadline),
         marketQuestion: params.marketQuestion,
         description: params.description,
         rules: params.rules,
@@ -229,7 +228,6 @@ export class MarketModule {
       const miResult = await this.marketInfoModule.createPopulatedMarketInfo({
         marketType: "multiLeg",
         resolverType: params.resolverType ?? { type: "uma" },
-        eventDeadline: toUnixTimestamp(params.eventDeadline),
         marketQuestion: params.marketQuestion,
         description: params.description,
         rules: params.rules,

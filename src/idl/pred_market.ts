@@ -127,6 +127,41 @@ export type PredMarket = {
       "args": []
     },
     {
+      "name": "adminMigrateMarket",
+      "docs": [
+        "Migrate market data from old format (with resolving_deadline) to new format",
+        "Only the admin can call this instruction"
+      ],
+      "discriminator": [
+        203,
+        217,
+        127,
+        253,
+        222,
+        155,
+        220,
+        22
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market account to migrate"
+          ],
+          "writable": true
+        },
+        {
+          "name": "systemProgram"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "appendDescription",
       "docs": [
         "Append to the description"
@@ -776,6 +811,10 @@ export type PredMarket = {
               "name": "coveredBy"
             }
           }
+        },
+        {
+          "name": "matchExisting",
+          "type": "bool"
         }
       ]
     },
@@ -825,10 +864,6 @@ export type PredMarket = {
               "name": "resolverType"
             }
           }
-        },
-        {
-          "name": "eventDeadline",
-          "type": "i64"
         }
       ]
     },
@@ -1418,6 +1453,10 @@ export type PredMarket = {
         {
           "name": "seed",
           "type": "u32"
+        },
+        {
+          "name": "matchExisting",
+          "type": "bool"
         }
       ]
     },
@@ -1548,6 +1587,10 @@ export type PredMarket = {
         {
           "name": "seed",
           "type": "u32"
+        },
+        {
+          "name": "matchExisting",
+          "type": "bool"
         }
       ]
     },
@@ -2195,6 +2238,34 @@ export type PredMarket = {
       ]
     },
     {
+      "name": "removeMarketInfo",
+      "docs": [
+        "Remove/close MarketInfo account (only when not locked)"
+      ],
+      "discriminator": [
+        102,
+        39,
+        28,
+        177,
+        126,
+        56,
+        33,
+        181
+      ],
+      "accounts": [
+        {
+          "name": "marketInfo",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "resolveExpiredMarket",
       "docs": [
         "Resolve an expired market to a 50/50 split",
@@ -2257,38 +2328,6 @@ export type PredMarket = {
         {
           "name": "description",
           "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "setEventDeadline",
-      "docs": [
-        "Set the event deadline"
-      ],
-      "discriminator": [
-        57,
-        35,
-        34,
-        35,
-        70,
-        6,
-        171,
-        141
-      ],
-      "accounts": [
-        {
-          "name": "marketInfo",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "signer": true
-        }
-      ],
-      "args": [
-        {
-          "name": "deadline",
-          "type": "i64"
         }
       ]
     },
@@ -2480,114 +2519,6 @@ export type PredMarket = {
         {
           "name": "rules",
           "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "truncateDescription",
-      "docs": [
-        "Truncate the description to a specified length"
-      ],
-      "discriminator": [
-        240,
-        107,
-        248,
-        50,
-        162,
-        202,
-        3,
-        50
-      ],
-      "accounts": [
-        {
-          "name": "marketInfo",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "systemProgram"
-        }
-      ],
-      "args": [
-        {
-          "name": "len",
-          "type": "u32"
-        }
-      ]
-    },
-    {
-      "name": "truncateMarketQuestion",
-      "docs": [
-        "Truncate the market question to a specified length"
-      ],
-      "discriminator": [
-        221,
-        9,
-        39,
-        162,
-        149,
-        167,
-        244,
-        98
-      ],
-      "accounts": [
-        {
-          "name": "marketInfo",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "systemProgram"
-        }
-      ],
-      "args": [
-        {
-          "name": "len",
-          "type": "u32"
-        }
-      ]
-    },
-    {
-      "name": "truncateRules",
-      "docs": [
-        "Truncate the rules to a specified length"
-      ],
-      "discriminator": [
-        189,
-        107,
-        215,
-        149,
-        236,
-        91,
-        200,
-        23
-      ],
-      "accounts": [
-        {
-          "name": "marketInfo",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "systemProgram"
-        }
-      ],
-      "args": [
-        {
-          "name": "len",
-          "type": "u32"
         }
       ]
     },
@@ -3026,6 +2957,10 @@ export type PredMarket = {
           {
             "name": "minOrderSize",
             "type": "u64"
+          },
+          {
+            "name": "eventDeadline",
+            "type": "i64"
           },
           {
             "name": "marketType",
@@ -3487,6 +3422,13 @@ export type PredMarket = {
             "type": "u64"
           },
           {
+            "name": "eventDeadline",
+            "docs": [
+              "Event deadline - when the real-world event occurs (unix timestamp in seconds)"
+            ],
+            "type": "i64"
+          },
+          {
             "name": "feeBps",
             "docs": [
               "Trading fee in basis points (e.g., 100 = 1%)"
@@ -3564,13 +3506,6 @@ export type PredMarket = {
               "USDC vault for this leg"
             ],
             "type": "pubkey"
-          },
-          {
-            "name": "resolvingDeadline",
-            "docs": [
-              "Deadline by which this leg must be resolved (50/50 fallback if missed)"
-            ],
-            "type": "u64"
           },
           {
             "name": "status",
@@ -3669,14 +3604,6 @@ export type PredMarket = {
                 "name": "resolverType"
               }
             }
-          },
-          {
-            "name": "eventDeadline",
-            "docs": [
-              "Event deadline - when the real-world event occurs (unix timestamp in seconds)",
-              "Different from resolving_deadline which is when resolution must happen"
-            ],
-            "type": "i64"
           },
           {
             "name": "marketQuestion",

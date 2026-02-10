@@ -121,6 +121,41 @@
       "args": []
     },
     {
+      "name": "admin_migrate_market",
+      "docs": [
+        "Migrate market data from old format (with resolving_deadline) to new format",
+        "Only the admin can call this instruction"
+      ],
+      "discriminator": [
+        203,
+        217,
+        127,
+        253,
+        222,
+        155,
+        220,
+        22
+      ],
+      "accounts": [
+        {
+          "name": "admin",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "market",
+          "docs": [
+            "The market account to migrate"
+          ],
+          "writable": true
+        },
+        {
+          "name": "system_program"
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "append_description",
       "docs": [
         "Append to the description"
@@ -770,6 +805,10 @@
               "name": "CoveredBy"
             }
           }
+        },
+        {
+          "name": "match_existing",
+          "type": "bool"
         }
       ]
     },
@@ -819,10 +858,6 @@
               "name": "ResolverType"
             }
           }
-        },
-        {
-          "name": "event_deadline",
-          "type": "i64"
         }
       ]
     },
@@ -1412,6 +1447,10 @@
         {
           "name": "seed",
           "type": "u32"
+        },
+        {
+          "name": "match_existing",
+          "type": "bool"
         }
       ]
     },
@@ -1542,6 +1581,10 @@
         {
           "name": "seed",
           "type": "u32"
+        },
+        {
+          "name": "match_existing",
+          "type": "bool"
         }
       ]
     },
@@ -2189,6 +2232,34 @@
       ]
     },
     {
+      "name": "remove_market_info",
+      "docs": [
+        "Remove/close MarketInfo account (only when not locked)"
+      ],
+      "discriminator": [
+        102,
+        39,
+        28,
+        177,
+        126,
+        56,
+        33,
+        181
+      ],
+      "accounts": [
+        {
+          "name": "market_info",
+          "writable": true
+        },
+        {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        }
+      ],
+      "args": []
+    },
+    {
       "name": "resolve_expired_market",
       "docs": [
         "Resolve an expired market to a 50/50 split",
@@ -2251,38 +2322,6 @@
         {
           "name": "description",
           "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "set_event_deadline",
-      "docs": [
-        "Set the event deadline"
-      ],
-      "discriminator": [
-        57,
-        35,
-        34,
-        35,
-        70,
-        6,
-        171,
-        141
-      ],
-      "accounts": [
-        {
-          "name": "market_info",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "signer": true
-        }
-      ],
-      "args": [
-        {
-          "name": "deadline",
-          "type": "i64"
         }
       ]
     },
@@ -2474,114 +2513,6 @@
         {
           "name": "rules",
           "type": "string"
-        }
-      ]
-    },
-    {
-      "name": "truncate_description",
-      "docs": [
-        "Truncate the description to a specified length"
-      ],
-      "discriminator": [
-        240,
-        107,
-        248,
-        50,
-        162,
-        202,
-        3,
-        50
-      ],
-      "accounts": [
-        {
-          "name": "market_info",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "system_program"
-        }
-      ],
-      "args": [
-        {
-          "name": "len",
-          "type": "u32"
-        }
-      ]
-    },
-    {
-      "name": "truncate_market_question",
-      "docs": [
-        "Truncate the market question to a specified length"
-      ],
-      "discriminator": [
-        221,
-        9,
-        39,
-        162,
-        149,
-        167,
-        244,
-        98
-      ],
-      "accounts": [
-        {
-          "name": "market_info",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "system_program"
-        }
-      ],
-      "args": [
-        {
-          "name": "len",
-          "type": "u32"
-        }
-      ]
-    },
-    {
-      "name": "truncate_rules",
-      "docs": [
-        "Truncate the rules to a specified length"
-      ],
-      "discriminator": [
-        189,
-        107,
-        215,
-        149,
-        236,
-        91,
-        200,
-        23
-      ],
-      "accounts": [
-        {
-          "name": "market_info",
-          "writable": true
-        },
-        {
-          "name": "authority",
-          "writable": true,
-          "signer": true
-        },
-        {
-          "name": "system_program"
-        }
-      ],
-      "args": [
-        {
-          "name": "len",
-          "type": "u32"
         }
       ]
     },
@@ -3020,6 +2951,10 @@
           {
             "name": "min_order_size",
             "type": "u64"
+          },
+          {
+            "name": "event_deadline",
+            "type": "i64"
           },
           {
             "name": "market_type",
@@ -3481,6 +3416,13 @@
             "type": "u64"
           },
           {
+            "name": "event_deadline",
+            "docs": [
+              "Event deadline - when the real-world event occurs (unix timestamp in seconds)"
+            ],
+            "type": "i64"
+          },
+          {
             "name": "fee_bps",
             "docs": [
               "Trading fee in basis points (e.g., 100 = 1%)"
@@ -3558,13 +3500,6 @@
               "USDC vault for this leg"
             ],
             "type": "pubkey"
-          },
-          {
-            "name": "resolving_deadline",
-            "docs": [
-              "Deadline by which this leg must be resolved (50/50 fallback if missed)"
-            ],
-            "type": "u64"
           },
           {
             "name": "status",
@@ -3663,14 +3598,6 @@
                 "name": "ResolverType"
               }
             }
-          },
-          {
-            "name": "event_deadline",
-            "docs": [
-              "Event deadline - when the real-world event occurs (unix timestamp in seconds)",
-              "Different from resolving_deadline which is when resolution must happen"
-            ],
-            "type": "i64"
           },
           {
             "name": "market_question",
