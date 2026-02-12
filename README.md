@@ -1,6 +1,6 @@
-# Yosoku SDK
+# YOSOKU SDK
 
-TypeScript SDK for the [Yosoku](https://yosoku.fun) prediction market protocol on Solana.
+TypeScript SDK for the [YOSOKU](https://yosoku.fun) prediction market protocol on Solana.
 
 Create markets, trade outcome shares, resolve events, and read on-chain state — all with a single typed client.
 

@@ -2,7 +2,7 @@
 
 ## Ticks
 
-Yosoku uses a **tick-based** pricing system. Prices are integers from **1 to 999**, where each tick equals $0.001.
+YOSOKU uses a **tick-based** pricing system. Prices are integers from **1 to 999**, where each tick equals $0.001.
 
 The YES and NO sides of any market always sum to **1000 ticks ($1.00)**. If YES is at 400 ($0.40), NO is at 600 ($0.60).
 

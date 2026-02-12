@@ -1,6 +1,6 @@
-# Yosoku SDK
+# YOSOKU SDK
 
-TypeScript SDK for the Yosoku prediction market protocol on Solana.
+TypeScript SDK for the YOSOKU prediction market protocol on Solana.
 
 **npm**: `yosoku` (v0.1.0)
 **Program ID**: `8p6MKtMGGugZMy2HGXtL3uBb11y7xuzXmbMbQgNmWVUQ`
